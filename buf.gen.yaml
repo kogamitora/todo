@@ -1,0 +1,12 @@
+# コード生成時、connect-go plugin と go pluginを使用し、生成されたコードは gen directory に出力されます。
+
+version: v1
+plugins:
+  - plugin: buf.build/connectrpc/go
+    out: gen
+    opt:
+      - paths=source_relative
+  - plugin: buf.build/protocolbuffers/go
+    out: gen
+    opt:
+      - paths=source_relative

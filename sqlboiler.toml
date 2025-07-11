@@ -1,0 +1,16 @@
+# sqlboiler.toml
+[mysql]
+dbname = "todo_db"
+host = "127.0.0.1"
+port = 3306
+user = "user"
+pass = "password"
+sslmode = "false"
+# 输出目录
+output = "internal/db/generated"
+# 包名
+pkgname = "generated"
+# 添加软删除支持
+no-hooks = false
+[mysql.features]
+soft-delete = true

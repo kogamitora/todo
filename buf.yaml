@@ -1,0 +1,11 @@
+# config for buf
+version: v1
+name: buf.build/kogamitora/todo
+deps:
+  - buf.build/googleapis/googleapis
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
