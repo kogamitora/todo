@@ -1,4 +1,3 @@
-// cmd/client/cmd/create.go
 package cmd
 
 import (
@@ -28,14 +27,14 @@ var createCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		client := todov1connect.NewTodoServiceClient(
 			http.DefaultClient,
-			"http://localhost:8080",
+			ServerURL,
 		)
 		req := &todov1.CreateTodoRequest{
 			Title:       title,
 			Description: description,
 		}
 		if dueDate != "" {
-			t, err := time.Parse("2006-01-02", dueDate)
+			t, err := time.Parse("2006-01-02", dueDate) //参考タイムパッケージのフォーマット
 			if err != nil {
 				log.Fatalf("Invalid due date format. Use YYYY-MM-DD: %v", err)
 			}

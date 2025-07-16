@@ -1,15 +1,14 @@
-// cmd/client/cmd/delete.go
 package cmd
 
 import (
-	"bufio" // 导入 bufio 包
+	"bufio"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"os" // 导入 os 包
+	"os"
 	"strconv"
-	"strings" // 导入 strings 包
+	"strings"
 
 	"connectrpc.com/connect"
 	"github.com/spf13/cobra"
@@ -29,7 +28,7 @@ var deleteCmd = &cobra.Command{
 			log.Fatalf("Invalid ID provided: %v", err)
 		}
 
-		// --- 新增确认逻辑 ---
+		// --- 確認 ---
 		fmt.Printf("Are you sure you want to delete TODO item with ID %d? (y/N): ", id)
 
 		reader := bufio.NewReader(os.Stdin)
@@ -38,13 +37,13 @@ var deleteCmd = &cobra.Command{
 
 		if input != "y" && input != "yes" {
 			fmt.Println("Deletion cancelled.")
-			return // 用户取消，直接退出
+			return
 		}
-		// --- 确认逻辑结束 ---
+		// --- 確認完了 ---
 
 		client := todov1connect.NewTodoServiceClient(
 			http.DefaultClient,
-			"http://localhost:8080",
+			ServerURL,
 		)
 
 		req := &todov1.DeleteTodoRequest{

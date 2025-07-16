@@ -1,0 +1,62 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+README_CN.md
+CLIENT_README.md
+*.md
+
+# Environment files
+.env
+.env.local
+.env.example
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+bin/
+dist/
+build/
+
+# Test files
+*_test.go
+test/
+coverage.out
+
+# Development tools
+.air.toml
+tmp/
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Makefile
+Makefile
+
+# Dependencies (will be downloaded in container)
+vendor/
+
+# Generated files that will be regenerated
+# gen/
+# models/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp

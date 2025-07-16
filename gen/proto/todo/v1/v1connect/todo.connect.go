@@ -7,13 +7,12 @@
 package v1connect
 
 import (
+	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
+	v1 "github.com/kogamitora/todo/gen/proto/todo/v1"
 	http "net/http"
 	strings "strings"
-
-	connect "connectrpc.com/connect"
-	v1 "github.com/kogamitora/todo/gen/proto/todo/v1"
 )
 
 // This is a compile-time assertion to ensure that this generated file and the connect package are
@@ -44,8 +43,8 @@ const (
 	TodoServiceUpdateTodoProcedure = "/todo.v1.TodoService/UpdateTodo"
 	// TodoServiceDeleteTodoProcedure is the fully-qualified name of the TodoService's DeleteTodo RPC.
 	TodoServiceDeleteTodoProcedure = "/todo.v1.TodoService/DeleteTodo"
-	// TodoServiceListTodosProcedure is the fully-qualified name of the TodoService's ListTodos RPC.
-	TodoServiceListTodosProcedure = "/todo.v1.TodoService/ListTodos"
+	// TodoServiceGetTodosProcedure is the fully-qualified name of the TodoService's GetTodos RPC.
+	TodoServiceGetTodosProcedure = "/todo.v1.TodoService/GetTodos"
 )
 
 // TodoServiceClient is a client for the todo.v1.TodoService service.
@@ -54,7 +53,7 @@ type TodoServiceClient interface {
 	GetTodo(context.Context, *connect.Request[v1.GetTodoRequest]) (*connect.Response[v1.GetTodoResponse], error)
 	UpdateTodo(context.Context, *connect.Request[v1.UpdateTodoRequest]) (*connect.Response[v1.UpdateTodoResponse], error)
 	DeleteTodo(context.Context, *connect.Request[v1.DeleteTodoRequest]) (*connect.Response[v1.DeleteTodoResponse], error)
-	ListTodos(context.Context, *connect.Request[v1.ListTodosRequest]) (*connect.Response[v1.ListTodosResponse], error)
+	GetTodos(context.Context, *connect.Request[v1.GetTodosRequest]) (*connect.Response[v1.GetTodosResponse], error)
 }
 
 // NewTodoServiceClient constructs a client for the todo.v1.TodoService service. By default, it uses
@@ -92,10 +91,10 @@ func NewTodoServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(todoServiceMethods.ByName("DeleteTodo")),
 			connect.WithClientOptions(opts...),
 		),
-		listTodos: connect.NewClient[v1.ListTodosRequest, v1.ListTodosResponse](
+		getTodos: connect.NewClient[v1.GetTodosRequest, v1.GetTodosResponse](
 			httpClient,
-			baseURL+TodoServiceListTodosProcedure,
-			connect.WithSchema(todoServiceMethods.ByName("ListTodos")),
+			baseURL+TodoServiceGetTodosProcedure,
+			connect.WithSchema(todoServiceMethods.ByName("GetTodos")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -107,7 +106,7 @@ type todoServiceClient struct {
 	getTodo    *connect.Client[v1.GetTodoRequest, v1.GetTodoResponse]
 	updateTodo *connect.Client[v1.UpdateTodoRequest, v1.UpdateTodoResponse]
 	deleteTodo *connect.Client[v1.DeleteTodoRequest, v1.DeleteTodoResponse]
-	listTodos  *connect.Client[v1.ListTodosRequest, v1.ListTodosResponse]
+	getTodos   *connect.Client[v1.GetTodosRequest, v1.GetTodosResponse]
 }
 
 // CreateTodo calls todo.v1.TodoService.CreateTodo.
@@ -130,9 +129,9 @@ func (c *todoServiceClient) DeleteTodo(ctx context.Context, req *connect.Request
 	return c.deleteTodo.CallUnary(ctx, req)
 }
 
-// ListTodos calls todo.v1.TodoService.ListTodos.
-func (c *todoServiceClient) ListTodos(ctx context.Context, req *connect.Request[v1.ListTodosRequest]) (*connect.Response[v1.ListTodosResponse], error) {
-	return c.listTodos.CallUnary(ctx, req)
+// GetTodos calls todo.v1.TodoService.GetTodos.
+func (c *todoServiceClient) GetTodos(ctx context.Context, req *connect.Request[v1.GetTodosRequest]) (*connect.Response[v1.GetTodosResponse], error) {
+	return c.getTodos.CallUnary(ctx, req)
 }
 
 // TodoServiceHandler is an implementation of the todo.v1.TodoService service.
@@ -141,7 +140,7 @@ type TodoServiceHandler interface {
 	GetTodo(context.Context, *connect.Request[v1.GetTodoRequest]) (*connect.Response[v1.GetTodoResponse], error)
 	UpdateTodo(context.Context, *connect.Request[v1.UpdateTodoRequest]) (*connect.Response[v1.UpdateTodoResponse], error)
 	DeleteTodo(context.Context, *connect.Request[v1.DeleteTodoRequest]) (*connect.Response[v1.DeleteTodoResponse], error)
-	ListTodos(context.Context, *connect.Request[v1.ListTodosRequest]) (*connect.Response[v1.ListTodosResponse], error)
+	GetTodos(context.Context, *connect.Request[v1.GetTodosRequest]) (*connect.Response[v1.GetTodosResponse], error)
 }
 
 // NewTodoServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -175,10 +174,10 @@ func NewTodoServiceHandler(svc TodoServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(todoServiceMethods.ByName("DeleteTodo")),
 		connect.WithHandlerOptions(opts...),
 	)
-	todoServiceListTodosHandler := connect.NewUnaryHandler(
-		TodoServiceListTodosProcedure,
-		svc.ListTodos,
-		connect.WithSchema(todoServiceMethods.ByName("ListTodos")),
+	todoServiceGetTodosHandler := connect.NewUnaryHandler(
+		TodoServiceGetTodosProcedure,
+		svc.GetTodos,
+		connect.WithSchema(todoServiceMethods.ByName("GetTodos")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/todo.v1.TodoService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -191,8 +190,8 @@ func NewTodoServiceHandler(svc TodoServiceHandler, opts ...connect.HandlerOption
 			todoServiceUpdateTodoHandler.ServeHTTP(w, r)
 		case TodoServiceDeleteTodoProcedure:
 			todoServiceDeleteTodoHandler.ServeHTTP(w, r)
-		case TodoServiceListTodosProcedure:
-			todoServiceListTodosHandler.ServeHTTP(w, r)
+		case TodoServiceGetTodosProcedure:
+			todoServiceGetTodosHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -218,6 +217,6 @@ func (UnimplementedTodoServiceHandler) DeleteTodo(context.Context, *connect.Requ
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("todo.v1.TodoService.DeleteTodo is not implemented"))
 }
 
-func (UnimplementedTodoServiceHandler) ListTodos(context.Context, *connect.Request[v1.ListTodosRequest]) (*connect.Response[v1.ListTodosResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("todo.v1.TodoService.ListTodos is not implemented"))
+func (UnimplementedTodoServiceHandler) GetTodos(context.Context, *connect.Request[v1.GetTodosRequest]) (*connect.Response[v1.GetTodosResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("todo.v1.TodoService.GetTodos is not implemented"))
 }

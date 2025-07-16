@@ -1,13 +1,3 @@
-/*
-internal/handler/todo_handler.go: 业务逻辑的核心。
-作用: 这个文件里的 TodoHandler 结构体，实现了由 buf 在 gen/ 目录中生成的 TodoServiceHandler 接口。对于每个 API 调用（如 CreateTodo），它会：
-接收 protobuf 格式的请求数据。
-将其转换为 sqlboiler 生成的数据库模型。
-调用 sqlboiler 的方法与数据库交互。
-将数据库返回的模型转换回 protobuf 格式的响应数据。
-返回响应或错误。
-*/
-
 package handler
 
 import (
@@ -27,13 +17,12 @@ import (
 	"github.com/kogamitora/todo/models"
 )
 
-// TodoHandler 实现了 TodoService
+// TodoService
 type TodoHandler struct {
 	db     *sql.DB
 	logger *slog.Logger
 }
 
-// 确保 TodoHandler 实现了接口
 var _ v1connect.TodoServiceHandler = (*TodoHandler)(nil)
 
 func NewTodoHandler(db *sql.DB, logger *slog.Logger) *TodoHandler {
@@ -43,7 +32,7 @@ func NewTodoHandler(db *sql.DB, logger *slog.Logger) *TodoHandler {
 	}
 }
 
-// modelToProto 将数据库模型转换为 protobuf 消息
+// modelToProto converts a Todo model to a protobuf Todo message.
 func modelToProto(t *models.Todo) *todov1.Todo {
 	todo := &todov1.Todo{
 		Id:        t.ID,
@@ -57,7 +46,7 @@ func modelToProto(t *models.Todo) *todov1.Todo {
 	if t.DueDate.Valid {
 		todo.DueDate = timestamppb.New(t.DueDate.Time)
 	}
-	// 将数据库 ENUM 字符串转换为 protobuf ENUM
+	//
 	switch t.Status {
 	case "TODO_STATUS_INCOMPLETE":
 		todo.Status = todov1.Status_STATUS_INCOMPLETE
@@ -98,13 +87,9 @@ func (h *TodoHandler) CreateTodo(ctx context.Context, req *connect.Request[todov
 func (h *TodoHandler) GetTodo(ctx context.Context, req *connect.Request[todov1.GetTodoRequest]) (*connect.Response[todov1.GetTodoResponse], error) {
 	h.logger.Info("GetTodo called", "id", req.Msg.Id)
 
-	todo, err := models.Todos(models.TodoWhere.ID.EQ(req.Msg.Id)).One(ctx, h.db)
+	todo, err := h.findTodoByID(ctx, req.Msg.Id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, connect.NewError(connect.CodeNotFound, err)
-		}
-		h.logger.Error("failed to get todo", "error", err)
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, err
 	}
 
 	return connect.NewResponse(&todov1.GetTodoResponse{
@@ -115,13 +100,9 @@ func (h *TodoHandler) GetTodo(ctx context.Context, req *connect.Request[todov1.G
 func (h *TodoHandler) UpdateTodo(ctx context.Context, req *connect.Request[todov1.UpdateTodoRequest]) (*connect.Response[todov1.UpdateTodoResponse], error) {
 	h.logger.Info("UpdateTodo called", "id", req.Msg.Id)
 
-	todo, err := models.FindTodo(ctx, h.db, req.Msg.Id)
+	todo, err := h.findTodoByID(ctx, req.Msg.Id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, connect.NewError(connect.CodeNotFound, err)
-		}
-		h.logger.Error("failed to find todo for update", "error", err)
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, err
 	}
 
 	if req.Msg.Title != nil {
@@ -158,16 +139,12 @@ func (h *TodoHandler) UpdateTodo(ctx context.Context, req *connect.Request[todov
 func (h *TodoHandler) DeleteTodo(ctx context.Context, req *connect.Request[todov1.DeleteTodoRequest]) (*connect.Response[todov1.DeleteTodoResponse], error) {
 	h.logger.Info("DeleteTodo called", "id", req.Msg.Id)
 
-	todo, err := models.FindTodo(ctx, h.db, req.Msg.Id)
+	todo, err := h.findTodoByID(ctx, req.Msg.Id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, connect.NewError(connect.CodeNotFound, err)
-		}
-		h.logger.Error("failed to find todo for delete", "error", err)
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, err
 	}
 
-	// 软删除
+	// soft delete: set DeletedAt to current time
 	todo.DeletedAt.Time = time.Now()
 	todo.DeletedAt.Valid = true
 	_, err = todo.Update(ctx, h.db, boil.Whitelist(models.TodoColumns.DeletedAt))
@@ -179,14 +156,14 @@ func (h *TodoHandler) DeleteTodo(ctx context.Context, req *connect.Request[todov
 	return connect.NewResponse(&todov1.DeleteTodoResponse{}), nil
 }
 
-func (h *TodoHandler) ListTodos(ctx context.Context, req *connect.Request[todov1.ListTodosRequest]) (*connect.Response[todov1.ListTodosResponse], error) {
-	h.logger.Info("ListTodos called")
+func (h *TodoHandler) GetTodos(ctx context.Context, req *connect.Request[todov1.GetTodosRequest]) (*connect.Response[todov1.GetTodosResponse], error) {
+	h.logger.Info("GetTodos called")
 
 	queryMods := []qm.QueryMod{
 		models.TodoWhere.DeletedAt.IsNull(),
 	}
 
-	// 默认按创建时间降序排序
+	// sort by created_at DESC by default
 	orderByClause := models.TodoColumns.CreatedAt + " DESC"
 
 	if req.Msg.SortByDueDate != nil {
@@ -215,10 +192,8 @@ func (h *TodoHandler) ListTodos(ctx context.Context, req *connect.Request[todov1
 		}
 	}
 
-	// 调试：输出生成的 SQL
 	h.logger.Info("Generated ORDER BY clause", "clause", orderByClause)
 
-	// ... 剩下的代码与之前相同 ...
 	todos, err := models.Todos(queryMods...).All(ctx, h.db)
 	if err != nil {
 		h.logger.Error("failed to list todos", "error", err)
@@ -230,7 +205,20 @@ func (h *TodoHandler) ListTodos(ctx context.Context, req *connect.Request[todov1
 		protoTodos[i] = modelToProto(t)
 	}
 
-	return connect.NewResponse(&todov1.ListTodosResponse{
+	return connect.NewResponse(&todov1.GetTodosResponse{
 		Todos: protoTodos,
 	}), nil
+}
+
+// findTodoByID finds a todo by its ID and handles common errors.
+func (h *TodoHandler) findTodoByID(ctx context.Context, id int64) (*models.Todo, error) {
+	todo, err := models.FindTodo(ctx, h.db, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("todo with id %d not found", id))
+		}
+		h.logger.Error("failed to find todo", "id", id, "error", err)
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return todo, nil
 }

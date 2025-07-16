@@ -1,0 +1,50 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/cmd/server/server
+/cmd/client/client
+
+# test files
+*.test
+
+# output directories
+/bin/
+/dist/
+
+
+vendor/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

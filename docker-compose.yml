@@ -1,17 +1,72 @@
 version: '3.8'
+
 services:
+ # 数据库服务
  db:
   image: mysql:8.0
   container_name: todo-mysql
   ports:
    - '3307:3306'
   environment:
-   MYSQL_ROOT_PASSWORD: 'root_password'
-   MYSQL_DATABASE: 'todo_db'
-   MYSQL_USER: 'user'
-   MYSQL_PASSWORD: 'password'
+   MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+   MYSQL_DATABASE: ${DB_NAME:-todo_db}
+   MYSQL_USER: ${DB_USER:-user}
+   MYSQL_PASSWORD: ${DB_PASSWORD:-password}
   volumes:
    - db_data:/var/lib/mysql
+  healthcheck:
+   test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', '${DB_USER:-user}', '-p${DB_PASSWORD:-password}']
+   interval: 30s
+   timeout: 10s
+   retries: 5
+  networks:
+   - todo-network
+
+ # 应用程序服务
+ app:
+  build:
+   context: .
+   dockerfile: Dockerfile
+  container_name: todo-server
+  ports:
+   - '${SERVER_PORT}:${SERVER_PORT}'
+  environment:
+   - SERVER_HOST=0.0.0.0
+   - SERVER_PORT=${SERVER_PORT}
+   - DB_HOST=db
+   - DB_PORT=3306
+   - DB_USER=${DB_USER:-user}
+   - DB_PASSWORD=${DB_PASSWORD:-password}
+   - DB_NAME=${DB_NAME:-todo_db}
+  depends_on:
+   db:
+    condition: service_healthy
+  networks:
+   - todo-network
+  restart: unless-stopped
+
+ migrate:
+  image: migrate/migrate
+  container_name: todo-migrate
+  networks:
+   - todo-network
+  volumes:
+   - ./migrations:/migrations
+  command:
+   [
+    '-path',
+    '/migrations',
+    '-database',
+    'mysql://${DB_USER:-user}:${DB_PASSWORD:-password}@tcp(db:3306)/${DB_NAME:-todo_db}?multiStatements=true',
+    'up',
+   ]
+  depends_on:
+   db:
+    condition: service_healthy
 
 volumes:
  db_data:
+
+networks:
+ todo-network:
+  driver: bridge

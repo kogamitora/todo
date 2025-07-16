@@ -1,4 +1,3 @@
-// Todo Service　を定義する
 syntax = "proto3";
 
 package todo.v1;
@@ -6,7 +5,7 @@ package todo.v1;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/kogamitora/todo/gen/todo/v1";
+option go_package = "github.com/kogamitora/todo/gen/proto/todo/v1";
 
 // Todo Status Enum
 enum Status {
@@ -39,7 +38,7 @@ service TodoService {
   rpc GetTodo(GetTodoRequest) returns (GetTodoResponse);
   rpc UpdateTodo(UpdateTodoRequest) returns (UpdateTodoResponse);
   rpc DeleteTodo(DeleteTodoRequest) returns (DeleteTodoResponse);
-  rpc ListTodos(ListTodosRequest) returns (ListTodosResponse);
+  rpc GetTodos(GetTodosRequest) returns (GetTodosResponse);
 }
 
 // Request and Response
@@ -82,11 +81,11 @@ message DeleteTodoResponse {
   google.protobuf.Empty message = 1;
 }
 
-message ListTodosRequest {
+message GetTodosRequest {
   optional Status status_filter = 1;
   optional SortOrder sort_by_due_date = 2;
 }
 
-message ListTodosResponse {
+message GetTodosResponse {
   repeated Todo todos = 1;
 }

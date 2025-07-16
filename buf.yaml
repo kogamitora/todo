@@ -1,4 +1,3 @@
-# config for buf
 version: v1
 name: buf.build/kogamitora/todo
 deps:

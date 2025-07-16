@@ -1,4 +1,3 @@
-// internal/db/db.go
 package db
 
 import (
@@ -16,12 +15,12 @@ func NewDB(dsn string, logger *slog.Logger) (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	// 设置连接池参数
+	// Set connection pool parameters
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
-	// 检查连接
+	// Ping the database to ensure connection is established
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}

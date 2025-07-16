@@ -618,7 +618,7 @@ func (x *DeleteTodoResponse) GetMessage() *emptypb.Empty {
 	return nil
 }
 
-type ListTodosRequest struct {
+type GetTodosRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StatusFilter  *Status                `protobuf:"varint,1,opt,name=status_filter,json=statusFilter,proto3,enum=todo.v1.Status,oneof" json:"status_filter,omitempty"`
 	SortByDueDate *SortOrder             `protobuf:"varint,2,opt,name=sort_by_due_date,json=sortByDueDate,proto3,enum=todo.v1.SortOrder,oneof" json:"sort_by_due_date,omitempty"`
@@ -626,20 +626,20 @@ type ListTodosRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTodosRequest) Reset() {
-	*x = ListTodosRequest{}
+func (x *GetTodosRequest) Reset() {
+	*x = GetTodosRequest{}
 	mi := &file_proto_todo_v1_todo_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTodosRequest) String() string {
+func (x *GetTodosRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTodosRequest) ProtoMessage() {}
+func (*GetTodosRequest) ProtoMessage() {}
 
-func (x *ListTodosRequest) ProtoReflect() protoreflect.Message {
+func (x *GetTodosRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_todo_v1_todo_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -651,46 +651,46 @@ func (x *ListTodosRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTodosRequest.ProtoReflect.Descriptor instead.
-func (*ListTodosRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetTodosRequest.ProtoReflect.Descriptor instead.
+func (*GetTodosRequest) Descriptor() ([]byte, []int) {
 	return file_proto_todo_v1_todo_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListTodosRequest) GetStatusFilter() Status {
+func (x *GetTodosRequest) GetStatusFilter() Status {
 	if x != nil && x.StatusFilter != nil {
 		return *x.StatusFilter
 	}
 	return Status_STATUS_UNSPECIFIED
 }
 
-func (x *ListTodosRequest) GetSortByDueDate() SortOrder {
+func (x *GetTodosRequest) GetSortByDueDate() SortOrder {
 	if x != nil && x.SortByDueDate != nil {
 		return *x.SortByDueDate
 	}
 	return SortOrder_SORT_ORDER_UNSPECIFIED
 }
 
-type ListTodosResponse struct {
+type GetTodosResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Todos         []*Todo                `protobuf:"bytes,1,rep,name=todos,proto3" json:"todos,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTodosResponse) Reset() {
-	*x = ListTodosResponse{}
+func (x *GetTodosResponse) Reset() {
+	*x = GetTodosResponse{}
 	mi := &file_proto_todo_v1_todo_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTodosResponse) String() string {
+func (x *GetTodosResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTodosResponse) ProtoMessage() {}
+func (*GetTodosResponse) ProtoMessage() {}
 
-func (x *ListTodosResponse) ProtoReflect() protoreflect.Message {
+func (x *GetTodosResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_todo_v1_todo_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -702,12 +702,12 @@ func (x *ListTodosResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTodosResponse.ProtoReflect.Descriptor instead.
-func (*ListTodosResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetTodosResponse.ProtoReflect.Descriptor instead.
+func (*GetTodosResponse) Descriptor() ([]byte, []int) {
 	return file_proto_todo_v1_todo_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ListTodosResponse) GetTodos() []*Todo {
+func (x *GetTodosResponse) GetTodos() []*Todo {
 	if x != nil {
 		return x.Todos
 	}
@@ -754,13 +754,13 @@ const file_proto_todo_v1_todo_proto_rawDesc = "" +
 	"\x11DeleteTodoRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"F\n" +
 	"\x12DeleteTodoResponse\x120\n" +
-	"\amessage\x18\x01 \x01(\v2\x16.google.protobuf.EmptyR\amessage\"\xb6\x01\n" +
-	"\x10ListTodosRequest\x129\n" +
+	"\amessage\x18\x01 \x01(\v2\x16.google.protobuf.EmptyR\amessage\"\xb5\x01\n" +
+	"\x0fGetTodosRequest\x129\n" +
 	"\rstatus_filter\x18\x01 \x01(\x0e2\x0f.todo.v1.StatusH\x00R\fstatusFilter\x88\x01\x01\x12@\n" +
 	"\x10sort_by_due_date\x18\x02 \x01(\x0e2\x12.todo.v1.SortOrderH\x01R\rsortByDueDate\x88\x01\x01B\x10\n" +
 	"\x0e_status_filterB\x13\n" +
-	"\x11_sort_by_due_date\"8\n" +
-	"\x11ListTodosResponse\x12#\n" +
+	"\x11_sort_by_due_date\"7\n" +
+	"\x10GetTodosResponse\x12#\n" +
 	"\x05todos\x18\x01 \x03(\v2\r.todo.v1.TodoR\x05todos*M\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x15\n" +
@@ -769,7 +769,7 @@ const file_proto_todo_v1_todo_proto_rawDesc = "" +
 	"\tSortOrder\x12\x1a\n" +
 	"\x16SORT_ORDER_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSORT_ORDER_ASC\x10\x01\x12\x13\n" +
-	"\x0fSORT_ORDER_DESC\x10\x022\xe4\x02\n" +
+	"\x0fSORT_ORDER_DESC\x10\x022\xe1\x02\n" +
 	"\vTodoService\x12E\n" +
 	"\n" +
 	"CreateTodo\x12\x1a.todo.v1.CreateTodoRequest\x1a\x1b.todo.v1.CreateTodoResponse\x12<\n" +
@@ -777,8 +777,8 @@ const file_proto_todo_v1_todo_proto_rawDesc = "" +
 	"\n" +
 	"UpdateTodo\x12\x1a.todo.v1.UpdateTodoRequest\x1a\x1b.todo.v1.UpdateTodoResponse\x12E\n" +
 	"\n" +
-	"DeleteTodo\x12\x1a.todo.v1.DeleteTodoRequest\x1a\x1b.todo.v1.DeleteTodoResponse\x12B\n" +
-	"\tListTodos\x12\x19.todo.v1.ListTodosRequest\x1a\x1a.todo.v1.ListTodosResponseB(Z&github.com/kogamitora/todo/gen/todo/v1b\x06proto3"
+	"DeleteTodo\x12\x1a.todo.v1.DeleteTodoRequest\x1a\x1b.todo.v1.DeleteTodoResponse\x12?\n" +
+	"\bGetTodos\x12\x18.todo.v1.GetTodosRequest\x1a\x19.todo.v1.GetTodosResponseB.Z,github.com/kogamitora/todo/gen/proto/todo/v1b\x06proto3"
 
 var (
 	file_proto_todo_v1_todo_proto_rawDescOnce sync.Once
@@ -806,8 +806,8 @@ var file_proto_todo_v1_todo_proto_goTypes = []any{
 	(*UpdateTodoResponse)(nil),    // 8: todo.v1.UpdateTodoResponse
 	(*DeleteTodoRequest)(nil),     // 9: todo.v1.DeleteTodoRequest
 	(*DeleteTodoResponse)(nil),    // 10: todo.v1.DeleteTodoResponse
-	(*ListTodosRequest)(nil),      // 11: todo.v1.ListTodosRequest
-	(*ListTodosResponse)(nil),     // 12: todo.v1.ListTodosResponse
+	(*GetTodosRequest)(nil),       // 11: todo.v1.GetTodosRequest
+	(*GetTodosResponse)(nil),      // 12: todo.v1.GetTodosResponse
 	(*timestamppb.Timestamp)(nil), // 13: google.protobuf.Timestamp
 	(*emptypb.Empty)(nil),         // 14: google.protobuf.Empty
 }
@@ -823,19 +823,19 @@ var file_proto_todo_v1_todo_proto_depIdxs = []int32{
 	0,  // 8: todo.v1.UpdateTodoRequest.status:type_name -> todo.v1.Status
 	2,  // 9: todo.v1.UpdateTodoResponse.todo:type_name -> todo.v1.Todo
 	14, // 10: todo.v1.DeleteTodoResponse.message:type_name -> google.protobuf.Empty
-	0,  // 11: todo.v1.ListTodosRequest.status_filter:type_name -> todo.v1.Status
-	1,  // 12: todo.v1.ListTodosRequest.sort_by_due_date:type_name -> todo.v1.SortOrder
-	2,  // 13: todo.v1.ListTodosResponse.todos:type_name -> todo.v1.Todo
+	0,  // 11: todo.v1.GetTodosRequest.status_filter:type_name -> todo.v1.Status
+	1,  // 12: todo.v1.GetTodosRequest.sort_by_due_date:type_name -> todo.v1.SortOrder
+	2,  // 13: todo.v1.GetTodosResponse.todos:type_name -> todo.v1.Todo
 	3,  // 14: todo.v1.TodoService.CreateTodo:input_type -> todo.v1.CreateTodoRequest
 	5,  // 15: todo.v1.TodoService.GetTodo:input_type -> todo.v1.GetTodoRequest
 	7,  // 16: todo.v1.TodoService.UpdateTodo:input_type -> todo.v1.UpdateTodoRequest
 	9,  // 17: todo.v1.TodoService.DeleteTodo:input_type -> todo.v1.DeleteTodoRequest
-	11, // 18: todo.v1.TodoService.ListTodos:input_type -> todo.v1.ListTodosRequest
+	11, // 18: todo.v1.TodoService.GetTodos:input_type -> todo.v1.GetTodosRequest
 	4,  // 19: todo.v1.TodoService.CreateTodo:output_type -> todo.v1.CreateTodoResponse
 	6,  // 20: todo.v1.TodoService.GetTodo:output_type -> todo.v1.GetTodoResponse
 	8,  // 21: todo.v1.TodoService.UpdateTodo:output_type -> todo.v1.UpdateTodoResponse
 	10, // 22: todo.v1.TodoService.DeleteTodo:output_type -> todo.v1.DeleteTodoResponse
-	12, // 23: todo.v1.TodoService.ListTodos:output_type -> todo.v1.ListTodosResponse
+	12, // 23: todo.v1.TodoService.GetTodos:output_type -> todo.v1.GetTodosResponse
 	19, // [19:24] is the sub-list for method output_type
 	14, // [14:19] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name

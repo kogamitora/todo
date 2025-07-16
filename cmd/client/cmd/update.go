@@ -28,27 +28,27 @@ var updateCmd = &cobra.Command{
 	Use:   "update [ID]",
 	Short: "Update a TODO item",
 	Long:  "Update a TODO item by its ID. You can update its title, description, due date, or status.",
-	Args:  cobra.ExactArgs(1), // 规定必须且只能有一个参数，即 TODO 的 ID
+	Args:  cobra.ExactArgs(1), // ID is required
 	Run: func(cmd *cobra.Command, args []string) {
-		// 1. 解析并验证 ID
+
+		// 1. ID parsing
 		id, err := strconv.ParseInt(args[0], 10, 64)
 		if err != nil {
 			log.Fatalf("Invalid ID provided: %v", err)
 		}
 
-		// 2. 创建 gRPC 客户端
+		// 2. create client
 		client := todov1connect.NewTodoServiceClient(
 			http.DefaultClient,
-			"http://localhost:8080",
+			ServerURL,
 		)
 
-		// 3. 构建请求体
+		// 3. create request
 		req := &todov1.UpdateTodoRequest{
 			Id: id,
 		}
 
-		// 4. 检查每个 flag 是否被用户设置，并相应地填充请求
-		// cobra 提供了 IsChanged 方法来判断一个 flag 是否在命令行中被用户显式设置
+		// 4. populate request fields
 		if cmd.Flags().Changed("title") {
 			req.Title = &updateTitle
 		}
@@ -75,7 +75,7 @@ var updateCmd = &cobra.Command{
 			req.Status = &status
 		}
 
-		// 5. 发送请求
+		// 5. send request
 		res, err := client.UpdateTodo(context.Background(), connect.NewRequest(req))
 		if err != nil {
 			log.Fatalf("Failed to update todo: %v", err)
@@ -88,9 +88,8 @@ var updateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
-	// 定义所有可更新字段的 flags
 	updateCmd.Flags().StringVarP(&updateTitle, "title", "t", "", "New title for the TODO")
 	updateCmd.Flags().StringVarP(&updateDescription, "description", "d", "", "New description for the TODO")
 	updateCmd.Flags().StringVar(&updateDueDate, "due-date", "", "New due date in YYYY-MM-DD format")
-	updateCmd.Flags().StringVar(&updateStatus, "status", "", "New status (completed|incomplete)")
+	updateCmd.Flags().StringVarP(&updateStatus, "status", "s", "", "New status (completed|incomplete)")
 }

@@ -12,88 +12,70 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrations)
 	t.Run("Todos", testTodos)
 }
 
 func TestDelete(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsDelete)
 	t.Run("Todos", testTodosDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsQueryDeleteAll)
 	t.Run("Todos", testTodosQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsSliceDeleteAll)
 	t.Run("Todos", testTodosSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsExists)
 	t.Run("Todos", testTodosExists)
 }
 
 func TestFind(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsFind)
 	t.Run("Todos", testTodosFind)
 }
 
 func TestBind(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsBind)
 	t.Run("Todos", testTodosBind)
 }
 
 func TestOne(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsOne)
 	t.Run("Todos", testTodosOne)
 }
 
 func TestAll(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsAll)
 	t.Run("Todos", testTodosAll)
 }
 
 func TestCount(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsCount)
 	t.Run("Todos", testTodosCount)
 }
 
 func TestHooks(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsHooks)
 	t.Run("Todos", testTodosHooks)
 }
 
 func TestInsert(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsInsert)
-	t.Run("SchemaMigrations", testSchemaMigrationsInsertWhitelist)
 	t.Run("Todos", testTodosInsert)
 	t.Run("Todos", testTodosInsertWhitelist)
 }
 
 func TestReload(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsReload)
 	t.Run("Todos", testTodosReload)
 }
 
 func TestReloadAll(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsReloadAll)
 	t.Run("Todos", testTodosReloadAll)
 }
 
 func TestSelect(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsSelect)
 	t.Run("Todos", testTodosSelect)
 }
 
 func TestUpdate(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsUpdate)
 	t.Run("Todos", testTodosUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
-	t.Run("SchemaMigrations", testSchemaMigrationsSliceUpdateAll)
 	t.Run("Todos", testTodosSliceUpdateAll)
 }
