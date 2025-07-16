@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
- # 数据库服务
+ # MySQL データベースサービス
  db:
   image: mysql:8.0
   container_name: todo-mysql
@@ -22,7 +22,7 @@ services:
   networks:
    - todo-network
 
- # 应用程序服务
+ # サーバーサービス
  app:
   build:
    context: .
@@ -45,6 +45,7 @@ services:
    - todo-network
   restart: unless-stopped
 
+ # migrationサービス
  migrate:
   image: migrate/migrate
   container_name: todo-migrate
