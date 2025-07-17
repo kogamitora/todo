@@ -58,6 +58,20 @@ func modelToProto(t *models.Todo) *todov1.Todo {
 	return todo
 }
 
+// findTodoByID finds a todo by its ID and handles common errors.
+func (h *TodoHandler) findTodoByID(ctx context.Context, id int64) (*models.Todo, error) {
+	todo, err := models.FindTodo(ctx, h.db, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("todo with id %d not found", id))
+		}
+		h.logger.Error("failed to find todo", "id", id, "error", err)
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return todo, nil
+}
+
+// CRUD operations
 func (h *TodoHandler) CreateTodo(ctx context.Context, req *connect.Request[todov1.CreateTodoRequest]) (*connect.Response[todov1.CreateTodoResponse], error) {
 	h.logger.Info("CreateTodo called", "title", req.Msg.Title)
 
@@ -208,17 +222,4 @@ func (h *TodoHandler) GetTodos(ctx context.Context, req *connect.Request[todov1.
 	return connect.NewResponse(&todov1.GetTodosResponse{
 		Todos: protoTodos,
 	}), nil
-}
-
-// findTodoByID finds a todo by its ID and handles common errors.
-func (h *TodoHandler) findTodoByID(ctx context.Context, id int64) (*models.Todo, error) {
-	todo, err := models.FindTodo(ctx, h.db, id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("todo with id %d not found", id))
-		}
-		h.logger.Error("failed to find todo", "id", id, "error", err)
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-	return todo, nil
 }
